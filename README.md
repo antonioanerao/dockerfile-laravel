@@ -36,7 +36,7 @@
 ### How to run
 
 #### Clone this repo
-    $ git clone https://github.com/antonioanerao/laravel-9-47-0.git
+    $ git clone https://github.com/antonioanerao/dockerfile-laravel-9-47-0.git
 
 #### CD to the repo folder
     $ cd laravel-9-47-0
