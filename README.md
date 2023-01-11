@@ -39,10 +39,10 @@
     $ git clone https://github.com/antonioanerao/dockerfile-laravel-9-47-0.git
 
 #### CD to the repo folder
-    $ cd laravel-9-47-0
+    $ cd dockerfile-laravel-9-47-0
 
 #### Build the docker image
-    $ docker build laravel:9.47.0 .
+    $ docker build -t laravel:9.47.0 .
     * You might need to run a composer install to create the vendor folder
 
 #### Do you prefer a Docker Image instead?
