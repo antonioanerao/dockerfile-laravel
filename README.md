@@ -1,7 +1,7 @@
 ### Docker Image for Laravel Projects
 
-#### Nginx Image Version
-    1.21.6
+#### Nginx Version
+    1.23.3
 
 #### Laravel Version
     9.47.0
