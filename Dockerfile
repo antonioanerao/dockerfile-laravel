@@ -58,6 +58,7 @@ RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
     curl -s https://deb.nodesource.com/setup_16.x | bash && \
     apt-get update && \
     apt install nodejs -y && \
+    npm install -g npm && \
     apt-get install -y msodbcsql18 && \
     apt-get install -y unixodbc-dev && \
     pecl install sqlsrv && \

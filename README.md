@@ -7,7 +7,10 @@
     8.2.4
 
 #### NODE Version
-    16.x
+    16.19.1
+
+### NPM Version
+    9.6.3
 
 #### PHP Extensions
     php8.2-fpm
