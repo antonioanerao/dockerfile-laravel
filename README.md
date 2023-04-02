@@ -3,11 +3,11 @@
 #### Nginx Version
     1.23.3
 
-#### Laravel Version
-    9.47.0
-
 #### PHP Version
-    8.2.1
+    8.2.4
+
+#### NODE Version
+    16.x
 
 #### PHP Extensions
     php8.2-fpm
@@ -36,14 +36,13 @@
 ### How to run
 
 #### Clone this repo
-    $ git clone https://github.com/antonioanerao/dockerfile-laravel-9-47-0.git
+    $ git clone https://github.com/antonioanerao/dockerfile-laravel.git
 
 #### CD to the repo folder
-    $ cd dockerfile-laravel-9-47-0
+    $ cd dockerfile-laravel
 
 #### Build the docker image
-    $ docker build -t laravel:9.47.0 .
-    * You might need to run a composer install to create the vendor folder
+    $ docker build -t laravel .
 
 #### Do you prefer a Docker Image instead?
     https://hub.docker.com/r/antonioanerao/laravel

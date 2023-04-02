@@ -4,8 +4,6 @@ VOLUME [ "/laravel" ]
 WORKDIR /laravel
 ENV ACCEPT_EULA=Y
 
-COPY --chown=www-data:www-data laravel /laravel
-
 RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \
     apt update && \
@@ -74,11 +72,9 @@ RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
     printf "# priority=30\nservice php8.2-fpm start\n" > /docker-entrypoint.d/30-php8.2-fpm.sh && \
     chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
     chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
+    composer create-project laravel/laravel . && \
     chgrp -R www-data /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs &&  \
-    chmod -R ug+rwx /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs &&  \
-    composer update && \
-    cp .env.example .env && \
-    php artisan key:generate
+    chmod -R ug+rwx /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs
 
 COPY config_cntr/php.ini /etc/php/8.2/fpm/php.ini
 COPY config_cntr/www.conf /etc/php/8.2/fpm/pool.d/www.conf
