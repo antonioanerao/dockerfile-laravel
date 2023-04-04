@@ -4,9 +4,12 @@ VOLUME [ "/laravel" ]
 WORKDIR /laravel
 ENV ACCEPT_EULA=Y
 
+# Define a timezone padrão
 RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
-    dpkg-reconfigure --frontend noninteractive tzdata && \
-    apt update && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
+# Instala as dependências do sistema
+RUN apt update && \
     apt -y upgrade && \
     echo "pt_BR.UTF-8 UTF-8" > /etc/locale.gen && \
     apt install -y ca-certificates \
@@ -24,10 +27,19 @@ RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
                    gcc \
                    g++ \
                    make \
-                   unzip && \
-    locale-gen && \
-    curl -o /etc/apt/trusted.gpg.d/php.gpg -fSL "https://packages.sury.org/php/apt.gpg" && \
-    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
+                   unzip \
+                   gcc \
+                   g++ \
+                   autoconf \
+                   libc-dev \
+                   pkg-config
+
+# Define a localização padrão
+RUN locale-gen && \
+    curl -o /etc/apt/trusted.gpg.d/php.gpg -fSL "https://packages.sury.org/php/apt.gpg"
+
+# Instala o PHP 8.2, suas extensões, node, npm e composer
+RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
     apt -y update && \
     apt -y install --allow-unauthenticated php8.2 \
                    php8.2-fpm \
@@ -46,19 +58,16 @@ RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
                    php8.2-bcmath \
                    php8.2-bz2 \
                    php8.2-phar \
-                   php8.2-sqlite3 \
-                   gcc \
-                   g++ \
-                   autoconf \
-                   libc-dev \
-                   pkg-config && \
-    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+                   php8.2-sqlite3 && \
+    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&  \
     curl -s https://deb.nodesource.com/setup_16.x | bash && \
     apt-get update && \
     apt install nodejs -y && \
-    npm install -g npm && \
+    npm install -g npm
+
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
     apt-get install -y msodbcsql18 && \
     apt-get install -y unixodbc-dev && \
     pecl install sqlsrv && \
@@ -74,7 +83,7 @@ RUN ln -fs /usr/share/zoneinfo/America/Rio_Branco /etc/localtime && \
     chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
     chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
     composer create-project laravel/laravel . && \
-    chgrp -R www-data /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs &&  \
+    chgrp -R www-data /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs && \
     chmod -R ug+rwx /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs
 
 COPY config_cntr/php.ini /etc/php/8.2/fpm/php.ini
