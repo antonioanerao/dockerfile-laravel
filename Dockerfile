@@ -63,7 +63,7 @@ RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc
     curl -s https://deb.nodesource.com/setup_16.x | bash && \
     apt-get update && \
     apt install nodejs -y && \
-    npm install -g npm
+    npm install -g npm@9.6.6
 
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
