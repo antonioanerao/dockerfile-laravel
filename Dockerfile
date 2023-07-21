@@ -35,12 +35,10 @@ RUN apt update && \
                    pkg-config
 
 # Define a localização padrão
-RUN locale-gen && \
-    curl -o /etc/apt/trusted.gpg.d/php.gpg -fSL "https://packages.sury.org/php/apt.gpg"
+RUN locale-gen
 
 # Instala o PHP 8.2, suas extensões, node, npm e composer
-RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list && \
-    apt -y update && \
+RUN apt -y update && \
     apt -y install --allow-unauthenticated php8.2 \
                    php8.2-fpm \
                    php8.2-mysql \
@@ -63,7 +61,7 @@ RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc
     curl -s https://deb.nodesource.com/setup_16.x | bash && \
     apt-get update && \
     apt install nodejs -y && \
-    npm install -g npm@9.6.6
+    apt install npm -y
 
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
