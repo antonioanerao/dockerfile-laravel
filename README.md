@@ -1,5 +1,7 @@
 ### Docker Image for Laravel Projects
 
+[![Docker](https://github.com/antonioanerao/dockerfile-laravel/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/antonioanerao/dockerfile-laravel/actions/workflows/docker-publish.yml)
+
 #### Nginx Version
     1.25.4
 
