@@ -20,7 +20,6 @@ RUN apt update && \
                    wget \
                    vim \
                    dirmngr \
-                   software-properties-common \
                    rsync \
                    gettext \
                    locales \
