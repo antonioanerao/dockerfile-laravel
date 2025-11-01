@@ -18,17 +18,11 @@ RUN apt update && \
                    gnupg \
                    curl \
                    wget \
-                   vim \
                    dirmngr \
                    rsync \
                    gettext \
                    locales \
-                   gcc \
-                   g++ \
-                   make \
                    unzip \
-                   gcc \
-                   g++ \
                    autoconf \
                    libc-dev \
                    pkg-config
@@ -59,31 +53,41 @@ RUN apt -y update && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&  \
     curl -s https://deb.nodesource.com/setup_18.x | bash && \
     apt-get update && \
-    apt install nodejs -y 
+    apt install nodejs -y
 
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list && \
+RUN apt-get update && \
+    apt-get install -y curl gnupg ca-certificates && \
+    curl -fsSL https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
+      -o /tmp/packages-microsoft-prod.deb && \
+    dpkg -i /tmp/packages-microsoft-prod.deb && \
+    rm /tmp/packages-microsoft-prod.deb && \
     apt-get update && \
-    apt-get install -y msodbcsql18 && \
-    apt-get install -y unixodbc-dev && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 unixodbc-dev && \
+    PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') && \
+    echo ">>> PHP detectado: $PHP_VERSION" && \
     pecl install sqlsrv && \
     pecl install pdo_sqlsrv && \
-    printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/8.2/mods-available/sqlsrv.ini && \
-    printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/8.2/mods-available/pdo_sqlsrv.ini && \
-    phpenmod -v 8.2 sqlsrv pdo_sqlsrv && \
+    printf "; priority=20\nextension=sqlsrv.so\n" > /etc/php/$PHP_VERSION/mods-available/sqlsrv.ini && \
+    printf "; priority=30\nextension=pdo_sqlsrv.so\n" > /etc/php/$PHP_VERSION/mods-available/pdo_sqlsrv.ini && \
+    phpenmod -v $PHP_VERSION sqlsrv pdo_sqlsrv && \
     rm -rf /var/lib/apt/lists/* && \
-    apt upgrade -y && \
-    apt autoremove -y && \
-    apt clean && \
-    printf "# priority=30\nservice php8.2-fpm start\n" > /docker-entrypoint.d/30-php8.2-fpm.sh && \
-    chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
-    chmod 755 /docker-entrypoint.d/30-php8.2-fpm.sh && \
+    apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    printf "# priority=30\nservice php$PHP_VERSION-fpm start\n" > /docker-entrypoint.d/30-php$PHP_VERSION-fpm.sh && \
+    chmod 755 /docker-entrypoint.d/30-php$PHP_VERSION-fpm.sh && \
     composer create-project laravel/laravel . && \
     chgrp -R www-data /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs && \
     chmod -R ug+rwx /laravel/storage /laravel/bootstrap/cache /laravel/storage/logs && \
     chown root:www-data -R database && chmod ug+rwx -R database
 
-COPY config_cntr/php.ini /etc/php/8.2/fpm/php.ini
-COPY config_cntr/www.conf /etc/php/8.2/fpm/pool.d/www.conf
-COPY config_cntr/nginx.conf /etc/nginx
-COPY config_cntr/default.conf /etc/nginx/conf.d
+COPY config_cntr/php.ini /tmp/php.ini
+COPY config_cntr/www.conf /tmp/www.conf
+COPY config_cntr/nginx.conf /tmp/nginx.conf
+COPY config_cntr/default.conf /tmp/default.conf
+
+RUN PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;') && \
+    cp /tmp/php.ini /etc/php/$PHP_VERSION/fpm/php.ini && \
+    cp /tmp/www.conf /etc/php/$PHP_VERSION/fpm/pool.d/www.conf && \
+    cp /tmp/nginx.conf /etc/nginx/nginx.conf && \
+    cp /tmp/default.conf /etc/nginx/conf.d/default.conf
